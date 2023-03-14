@@ -10,13 +10,17 @@ namespace IntegralWinForms2
     {
         // Левая и правая граница
         private double a, b;
+        private int width, height;
         private double max, min;
         public delegate double FunctionDelegate(double x);
-
+        private double distanceX;
+        private double distanceY;
         public double A => a;
         public double B => b;
         public double Min => min;
         public double Max => max;
+        public double DistanceX => distanceX;
+        public double DistanceY => distanceY;
 
         public Function(double a, double b, FunctionDelegate func)
         {
@@ -24,27 +28,9 @@ namespace IntegralWinForms2
             this.b = b;
             this.max = ToFindMax(func);
             this.min = ToFindMin(func);
+            this.distanceX = Math.Abs(b - a);
+            this.distanceY = Math.Abs(this.max - this.min);
         }
-        //public List<int> ToFill(FunctionDelegate func)
-        //{   
-        //    List<int> list = new List<int>();
-        //    int intervalX = (Math.Abs((int)Math.Truncate(this.B) - (int)Math.Truncate(this.A)));
-        //    int intervalY = (Math.Abs((int)Math.Truncate(this.Max) - (int)Math.Truncate(this.Min)));
-        //    for (double i = this.A; i <= this.B;)
-        //    {
-        //        list.Add(Translation(func, i));
-        //        i+= 426 / intervalY;
-        //    }
-        //    return list;
-        //}
-        //public int Translation(FunctionDelegate func, double n)
-        //{
-        //    int intervalX = (Math.Abs((int)Math.Truncate(this.B) - (int)Math.Truncate(this.A)));
-        //    int intervalY = (Math.Abs((int)Math.Truncate(this.Max) - (int)Math.Truncate(this.Min)));
-        //    n = func(n);
-        //    n *= intervalY / 426; // pictureBox1.width
-        //    return (int)n;
-        //}
         public double ToFindMax(FunctionDelegate func)
         {
             double maxValue = Math.Min(func(this.A), func(this.B));

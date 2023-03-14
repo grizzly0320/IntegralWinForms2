@@ -23,17 +23,88 @@ namespace IntegralWinForms2
         {
             this.width = width;
             this.height = hieght;
-            function = new Function(-3, 3, (x) => x * x);
+            this.function = new Function(-3.0, 3.0, (x) => x * x);
+        }
+        public void FillArea(Graphics graphics)
+        {
+            Point[] pointsFunction = new Point[this.Width];
+            pointsFunction = GetFunctionPoints();
+            Point[] pointstAbscissaAxis = new Point[this.Width];
+            pointstAbscissaAxis = GetAbscissaAxisPoints();
+            for (int i = 0; i < this.Width; i++)
+            {
+                graphics.DrawLine(new Pen(Color.FromArgb(228, 181, 175)), pointsFunction[i], pointstAbscissaAxis[i]);
+            }
         }
         public void ToDrawFunction(Graphics graphics)
         {
-            //List<int> list = function.ToFill((x) => x * x);
-            //Point[] points = new Point[this.Width];
-            //for (int i = 0; i < this.Width; i++)
-            //{
-            //    points[i] = new Point(i, list[i]);
-            //}
-            //graphics.DrawLines(new Pen(Color.Red), points);
+            Point[] points = GetFunctionPoints();
+            graphics.DrawLines(new Pen(Color.FromArgb(193, 124, 121)), points);
+        }
+        // Перенести в класс Function
+        public Point[] GetFunctionPoints()
+        {
+            List<double> list = ToFill((x) => x * x);
+            Point[] points = new Point[this.Width];
+            for (int i = 0; i < this.Width; i++)
+            {
+                points[i].X = i;
+                points[i].Y = this.Height - (int)list[i];
+            }
+            return points;
+        }
+        // Перенести в класс Function
+        public Point[] GetAbscissaAxisPoints()
+        {
+            Point[] points = new Point[this.Width];
+            int intervalY = (Math.Abs((int)Math.Truncate(this.function.Max) - (int)Math.Truncate(this.function.Min)));
+            if (this.function.Min >= 0)
+                for (int i = 0; i < this.Width; i++)
+                {
+                    points[i].X = i;
+                    points[i].Y = this.Height - 2;
+                }
+            else if (this.function.Max <= 0)
+                for (int i = 0; i < this.Width; i++)
+                {
+                    points[i].X = i;
+                    points[i].Y = 2;
+                }
+            else
+                for (int i = 0; i < this.Width; i++)
+                {
+                    points[i].X = i;
+                    points[i].Y = (this.Width / intervalY) * (intervalY / 2) + 2;
+                }
+            return points;
+        }
+        public List<double> ToFill(FunctionDelegate func)
+        {
+            //Сколько пикселей в сантиметре
+            double px_cmX = this.width / this.function.DistanceX;
+            double px_cmY = this.width / this.function.DistanceY;
+            //Сколько сантиметров в пикселе
+            double cm_pxX = this.function.DistanceX / this.width;
+            double cm_pxY = this.function.DistanceY / this.width;
+
+            List<double> list = new List<double>();
+            for (double i = this.function.A; i <= this.function.B;)
+            {
+                list.Add(Translation(func, i));
+                i += cm_pxX;
+            }
+            return list;
+        }
+        public double Translation(FunctionDelegate func, double n)
+        {
+            //Сколько пикселей в сантиметре
+            double px_cmX = this.width / this.function.DistanceX;
+            double px_cmY = this.width / this.function.DistanceY;
+            //Сколько сантиметров в пикселе
+            double cm_pxX = this.function.DistanceX / this.width;
+            double cm_pxY = this.function.DistanceY / this.width;
+            //return (int)(func(n) * px_cmY);
+            return (func(n) * px_cmY);
         }
         public void DrawGrid(Graphics graphics) 
         {

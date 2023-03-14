@@ -23,6 +23,7 @@ namespace IntegralWinForms2
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
+            painter.FillArea(e.Graphics);
             painter.DrawGrid(e.Graphics);
             painter.ToDrawAbscissaAxis(e.Graphics);
             painter.ToDrawOrdinateAxis(e.Graphics);
@@ -34,6 +35,7 @@ namespace IntegralWinForms2
             Graphics graphics = pictureBox1.CreateGraphics();
             painter = new Painter(pictureBox1.Width, pictureBox1.Height);
             pictureBox1.Refresh();
+            painter.FillArea(graphics);
             painter.DrawGrid(graphics);
             painter.ToDrawAbscissaAxis(graphics);
             painter.ToDrawOrdinateAxis(graphics);
